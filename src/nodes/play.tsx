@@ -5,6 +5,7 @@ import { shallow } from 'zustand/shallow';
 const selector = (id: string) => (store: Store) => ({
     tooglePlay: (e: React.ChangeEvent<HTMLInputElement>) => store.updateNode(id, { play: e.target.checked })
 });
+
 export default function Play({ id, data }: NodeProps<RFNode<NodeData>>) {
     const store = useStore(selector(id), shallow);
     return (
