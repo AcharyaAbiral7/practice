@@ -1,19 +1,16 @@
-import type { NodeProps, Node as RFNode } from "@xyflow/react";
+import { Handle, Position, type NodeProps, type Node as RFNode } from "@xyflow/react";
 import { type NodeData } from "./osc";
-import { useStore, type Store } from "../store";
-import { shallow } from 'zustand/shallow';
-const selector = (id: string) => (store: Store) => ({
-    tooglePlay: (e: React.ChangeEvent<HTMLInputElement>) => store.updateNode(id, { play: e.target.checked })
-});
+import { usePlay } from "../hooks";
 
 export default function Play({ id, data }: NodeProps<RFNode<NodeData>>) {
-    const store = useStore(selector(id), shallow);
+    const {togglePlayButton} = usePlay(id);
     return (
-        <div>
-            <p>Play Node</p>
-            <label>
-                <input type="checkbox" checked={data.play} onChange={store.tooglePlay}></input>
+        <div className="bg-blue-500 rounded-lg p-4">
+            <p className="text-center text-white font-semibold mb-2">Play Node</p>
+            <label className="flex justify-center">
+                <input type="checkbox" checked={data.play} onChange={togglePlayButton()}></input>
             </label>
+            <Handle type="target" position={Position.Top}/>
 
         </div>
     );

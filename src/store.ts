@@ -5,29 +5,29 @@ import {
 import { createWithEqualityFn } from 'zustand/traditional';
 import { nanoid }
     from 'nanoid';
-import {type NodeData } from "./nodes/osc";
-import { connect, disconnect, removeAudioNode, updateAudioNode } from "./audio";
+import { type NodeData } from "./nodes/osc";
+import { addAudioNode, connect, disconnect, removeAudioNode, updateAudioNode } from "./audio";
 export type Store = {
-    nodes: RFNode[];
+    nodes: RFNode<Partial<NodeData>>[];
     edges: Edge[];
     onNodesChange: OnNodesChange;
     onEdgesChange: OnEdgesChange;
     addEdge:
     (connection: Connection) => void;
     updateNode: (id: string, data: Partial<NodeData>) => void;
-    removeNodes: (nodes:Array<RFNode>)=>void;
-    removeEdges: (edges:Array<Edge>)=>void;
+    removeNodes: (nodes: Array<RFNode>) => void;
+    removeEdges: (edges: Array<Edge>) => void;
+    addNode: (type: string) => void;
 };
 
 export const useStore = createWithEqualityFn<Store>((set, get) => (
     {
-        // nodes: [],
         nodes: [
             { id: 'a', data: { label: 'oscillator', type: 'sine', frequency: 500 }, type: 'oscillator', position: { x: 0, y: 0 } },
-            { id: 'b', data: { label: 'gain', gain:50 }, type:'gain', position: { x: 50, y: 50 } },
+            { id: 'b', data: { label: 'gain', gain: 50 }, type: 'gain', position: { x: 50, y: 50 } },
             {
                 id: 'c',
-                data: { label: 'output', play:false }, type:'play', position: { x: -50, y: 100 }
+                data: { label: 'output', play: false }, type: 'play', position: { x: -50, y: 100 }
             }
         ],
         edges: [],
@@ -44,6 +44,7 @@ export const useStore = createWithEqualityFn<Store>((set, get) => (
         },
         addEdge(connection) {
             const id = nanoid(6);
+            console.log(connection);
             connect(connection.source, connection.target);
             const
                 edge: Edge = { id, ...connection };
@@ -52,21 +53,36 @@ export const useStore = createWithEqualityFn<Store>((set, get) => (
             });
         },
         updateNode(id, data) {
-            updateAudioNode(id, data);
             set({
                 nodes: get().nodes.map(
-                    node => node.id === id ? 
-                    { ...node, data: { ...node.data, ...data } } : node)
+                    node => node.id === id ?
+                        { ...node, data: { ...node.data, ...data } } : node)
             });
+            updateAudioNode(id, data);
         },
         removeNodes(nodes) {
-            for (const {id} of nodes) {
-                removeAudioNode(id);        
+            for (const { id } of nodes) {
+                removeAudioNode(id);
             }
         },
         removeEdges(edges) {
-            for(const edge of edges) {
+            for (const edge of edges) {
                 disconnect(edge.source, edge.target);
+            }
+        },
+        addNode(type) {
+            const id = nanoid(6);
+            switch (type) {
+                case "osc":
+                    const osc:RFNode<Partial<NodeData>> = { id: id, data: { label: 'oscillator', type: 'sine', frequency: 500 }, type: 'oscillator', position: { x: 0, y: 0 } };
+                    addAudioNode('osc', osc);
+                    set({ nodes: [osc, ...get().nodes] });
+                    break;
+                case "gain":
+                    const gain = { id: id, data: { label: 'gain', gain: 50 }, type: 'gain', position: { x: 0, y: 0 } };
+                    addAudioNode('gain',gain);
+                    set({ nodes: [gain, ...get().nodes] });
+                    break;
             }
         }
 

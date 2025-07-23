@@ -10,6 +10,7 @@ const selector = (id: string) => (store: Store) => ({
 export type NodeData = {
     frequency: number;
     type: 'sine' | 'square' | 'traingular' | 'sawtooth';
+    label: string;
     gain: number;
     play: boolean;
 }
@@ -17,12 +18,12 @@ export type NodeData = {
 export default function Osc({ id, data }: NodeProps<RFNode<NodeData>>) {
     const store = useStore(selector(id), shallow);
     return (
-        <div>
+        <div className = "bg-green-400 rounded-lg p-4">
             <div>
-                <p>Oscillator Node</p>
+                <p className="text-center text-white font-semibold mb-2">Oscillator Node</p>
 
-                <label>
-                    <span>Frequency</span>
+                <label className = "flex display-center gap-4">
+                    <span className="font-semibold">Frequency</span>
                     <input
                         className="nodrag"
                         type="range"
@@ -31,14 +32,14 @@ export default function Osc({ id, data }: NodeProps<RFNode<NodeData>>) {
                         value={data.frequency}
                         readOnly
                         onChange={store.setFrequency}
-                    />
+                        />
 
-                    <span>{data.frequency}Hz</span>
+                    <span className="font-semibold">{data.frequency}Hz</span>
                 </label>
 
-                <label>
-                    <span>Waveform</span>
-                    <select className="nodrag" value={data.type} onChange={store.setType}>
+                <label className="flex justify-center gap-4 mt-2">
+                    <span className="font-semibold">Waveform</span>
+                    <select className="nodrag font-semibold border rounded-lg" value={data.type} onChange={store.setType}>
                         <option value="sine">sine</option>
                         <option value="triangle">triangle</option>
                         <option value="sawtooth">sawtooth</option>

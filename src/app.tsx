@@ -1,11 +1,10 @@
-import React from 'react';
-import { ReactFlow, Background } from '@xyflow/react';
+import { ReactFlow, Background, Panel } from '@xyflow/react';
 import { useStore, type Store } from './store';
 import { shallow } from 'zustand/shallow';
 import Osc from './nodes/osc';
 import Gain from './nodes/gain';
 import Play from './nodes/play';
-
+import { Button } from "@/components/ui/button";
 
 const selector = (store: Store) => ({
     nodes: store.nodes,
@@ -13,7 +12,8 @@ const selector = (store: Store) => ({
     onNodesChange: store.onNodesChange,
     onEdgesChange: store.onEdgesChange,
     addEdge: store.addEdge,
-    removeNodes: store.removeNodes 
+    removeNodes: store.removeNodes, 
+    addNode: store.addNode
 });
 
 const nodeTypes = {
@@ -35,6 +35,10 @@ export default function App() {
             onConnect={store.addEdge}
             defaultViewport={{ x: window.innerWidth / 2, y: window.innerHeight / 2, zoom: 1 }}
         >
+            <Panel position="bottom-center" className="flex justify-content gap-2">
+                <Button onClick={()=>store.addNode('osc')}>Add Osc</Button>
+                <Button onClick={()=>store.addNode('gain')}>Add Gain</Button>
+            </Panel>
             <Background />
         </ReactFlow>
     );

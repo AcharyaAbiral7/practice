@@ -13,11 +13,11 @@ const selector = (id: string) => (store: Store) => ({
 export default function Gain({ id, data }: NodeProps<RFNode<NodeData>>) {
     const store = useStore(selector(id), shallow);
     return (
-        <div>
-            <p>Gain Node</p>
+        <div className="bg-red-500 rounded-lg p-4">
+            <p className="text-center text-white font-semibold mb-2">Gain Node</p>
 
-            <label>
-                <span>Gain</span>
+            <label className= "flex display-center gap-4">
+                <span className="font-semibold">Gain</span>
                 <input
                     className="nodrag"
                     type="range"
@@ -28,7 +28,7 @@ export default function Gain({ id, data }: NodeProps<RFNode<NodeData>>) {
                     onChange={store.setGain}
                 />
 
-                <span>{data.gain}%</span>
+                <span className="font-semibold">{data.gain}%</span>
             </label>
             <Handle type = "source" position={Position.Bottom}/>
             <Handle type = "target" position={Position.Top}/>
